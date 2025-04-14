@@ -14,6 +14,7 @@ A flexible, powerful password cracking toolkit designed for CTFs, cybersecurity 
 - Cracks hashes in **MD5**, **SHA1**, and **SHA256**
 - Outputs all combinations to `MegaGigaWordlist.txt`
 - Designed for **Capture the Flag (CTF)** and forensic memory dump challenges
+- Optional GUI mode
 
 ## Requirements
 
