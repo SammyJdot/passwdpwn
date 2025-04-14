@@ -26,4 +26,4 @@ A flexible, powerful password cracking toolkit designed for CTFs, cybersecurity 
 Run the script and follow the prompts:
 
 ```bash
-python generate_wordlist.py
+python passwdpwn.py
