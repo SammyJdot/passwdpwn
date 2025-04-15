@@ -5,6 +5,7 @@ import random
 import string
 import tkinter as tk
 from tkinter import filedialog, messagebox
+from tqdm import tqdm
 
 special_chars = ['@', '#', '$', '%', '^', '&', '*', '!', '?', '_', '-', '=', '+']
 leet_map = {
@@ -13,8 +14,11 @@ leet_map = {
     'i': ['i', '1', '!'],
     'o': ['o', '0'],
     's': ['s', '$', '5'],
-    't': ['t', '7']
+    't': ['t', '7'],
+    'l': ['l', '1', '!']
 }
+
+numeric_suffixes = [str(i) for i in range(10)] + [f"{i:02}" for i in range(100)] + ['100', '200', '500', '2000', '3000']
 
 def leetify(word):
     combos = set()
@@ -38,7 +42,11 @@ def generate_variants(word):
             variants.add(form + c)
             variants.add(c + form)
         variants.update(leetify(form))
-    return variants
+    variants_with_numbers = set()
+    for v in variants:
+        for n in numeric_suffixes:
+            variants_with_numbers.add(v + n)
+    return variants | variants_with_numbers
 
 def hash_word(word, method):
     h = word.encode()
@@ -55,8 +63,9 @@ def run_crack(names, places, dates, keywords, extra_words, target_hash, hash_typ
     all_inputs = names + places + dates + keywords + extra_words
     MegaSet = set()
 
+    print("[*] Generating wordlist...")
     for word in all_inputs:
-        MegaSet.add(word)  # raw word
+        MegaSet.add(word)
         MegaSet.update(generate_variants(word))
 
     for w1 in all_inputs:
@@ -77,16 +86,15 @@ def run_crack(names, places, dates, keywords, extra_words, target_hash, hash_typ
         for word in MegaSet:
             f.write(word + "\n")
 
-    print(f"\nSaved {len(MegaSet)} entries to MegaGigaWordlist.txt. Now cracking...")
+    print(f"\n[*] Saved {len(MegaSet)} entries to MegaGigaWordlist.txt. Now cracking...")
 
-    for word in MegaSet:
+    for word in tqdm(MegaSet, desc="Cracking in progress"):
         if hash_word(word, hash_type) == target_hash:
-            print(f"\nMATCH FOUND: {word}")
+            print(f"\n[+] MATCH FOUND: {word}")
             return word
-    print("\nNo match found.")
+    print("\n[-] No match found.")
     return None
 
-# GUI mode
 def run_gui():
     def browse_file():
         file = filedialog.askopenfilename()
@@ -101,7 +109,7 @@ def run_gui():
         extra_words = []
 
         if wordlist_entry.get():
-            try:
+            try: 
                 with open(wordlist_entry.get(), 'r', encoding='utf-8') as f:
                     extra_words = [line.strip() for line in f.readlines()]
             except:
