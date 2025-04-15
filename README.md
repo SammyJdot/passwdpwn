@@ -32,5 +32,5 @@ Before running, make sure you have tqdm installed. Run
 Run the script and follow the prompts:
 
 ```bash
-python passwdpwn.py
+python3 passwdpwn.py
 ```
